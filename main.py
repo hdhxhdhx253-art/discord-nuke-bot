@@ -37,6 +37,79 @@ async def on_ready():
 async def start(interaction: discord.Interaction):
     await interaction.response.send_message("✅ Bot is running and online! 24/7 active!")
 
+# -- SAFE SIMULATE COMMANDS (non-destructive) ---------------------------------
+@bot.tree.command(name="simulate_nuke", description="Simulate the /nuke action (safe preview)")
+async def simulate_nuke(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
+    guild = interaction.guild
+    if not guild:
+        await interaction.followup.send("❌ This command can only be used in a server!", ephemeral=True)
+        return
+
+    channels = list(guild.channels)
+    total_channels = len(channels)
+    sample_channels = [c.name for c in channels[:10]]
+    planned_creates = min(99, len(channels))
+    planned_messages_per_channel = 3
+
+    report = (
+        f"🛡️ SIMULATE: Nuke Preview\n"
+        f"Server: {guild.name}\n"
+        f"Total channels detected: {total_channels}\n"
+        f"Sample channels (first {len(sample_channels)}): {', '.join(sample_channels) or 'None'}\n"
+        f"Planned new channels to create: {planned_creates}\n"
+        f"Planned messages per channel (simulation): {planned_messages_per_channel}\n"
+        f"Reminder: This is only a simulation — no channels/members will be modified."
+    )
+
+    await interaction.followup.send(report, ephemeral=True)
+
+@bot.tree.command(name="simulate_kick", description="Simulate the /kick action (safe preview)")
+async def simulate_kick(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
+    guild = interaction.guild
+    if not guild:
+        await interaction.followup.send("❌ This command can only be used in a server!", ephemeral=True)
+        return
+
+    members = [m for m in guild.members if not m.bot]
+    total_members = len(members)
+    sample_members = [m.name for m in members[:10]]
+
+    report = (
+        f"🛡️ SIMULATE: Kick Preview\n"
+        f"Server: {guild.name}\n"
+        f"Total human members detected: {total_members}\n"
+        f"Sample members (first {len(sample_members)}): {', '.join(sample_members) or 'None'}\n"
+        f"Reminder: This is only a simulation — no members will be kicked."
+    )
+
+    await interaction.followup.send(report, ephemeral=True)
+
+@bot.tree.command(name="simulate_ban", description="Simulate the /ban action (safe preview)")
+async def simulate_ban(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=True)
+    guild = interaction.guild
+    if not guild:
+        await interaction.followup.send("❌ This command can only be used in a server!", ephemeral=True)
+        return
+
+    members = [m for m in guild.members if not m.bot]
+    total_members = len(members)
+    sample_members = [m.name for m in members[:10]]
+
+    report = (
+        f"🛡️ SIMULATE: Ban Preview\n"
+        f"Server: {guild.name}\n"
+        f"Total human members detected: {total_members}\n"
+        f"Sample members (first {len(sample_members)}): {', '.join(sample_members) or 'None'}\n"
+        f"Reminder: This is only a simulation — no members will be banned."
+    )
+
+    await interaction.followup.send(report, ephemeral=True)
+
+# -- END SAFE SIMULATE COMMANDS ------------------------------------------------
+
 # Channel names list
 CHANNEL_NAMES = [
     "💀・destroyed",
