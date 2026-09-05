@@ -23,8 +23,8 @@ async def on_ready():
         print(e)
 
 # /nuke command - Delete all channels
+# ✅ ADMIN PERMISSION REMOVED - ALL MEMBERS CAN USE
 @bot.tree.command(name="nuke", description="Delete all channels in the server")
-@discord.app_commands.checks.has_permissions(administrator=True)
 async def nuke(interaction: discord.Interaction):
     await interaction.response.defer()
     
@@ -32,11 +32,6 @@ async def nuke(interaction: discord.Interaction):
     
     if not guild:
         await interaction.followup.send("❌ This command can only be used in a server!")
-        return
-    
-    # Check if user has admin permissions
-    if not interaction.user.guild_permissions.administrator:
-        await interaction.followup.send("❌ You need Administrator permissions to use this command!")
         return
     
     try:
@@ -63,10 +58,7 @@ async def nuke(interaction: discord.Interaction):
 # Error handler
 @nuke.error
 async def nuke_error(interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
-    if isinstance(error, discord.app_commands.MissingPermissions):
-        await interaction.response.send_message("❌ You need Administrator permissions!", ephemeral=True)
-    else:
-        await interaction.response.send_message(f"❌ Error: {str(error)}", ephemeral=True)
+    await interaction.response.send_message(f"❌ Error: {str(error)}", ephemeral=True)
 
 # Run bot
 token = os.getenv('DISCORD_TOKEN')
